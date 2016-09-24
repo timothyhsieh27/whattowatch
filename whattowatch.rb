@@ -128,7 +128,7 @@ class Movie
     require 'CSV'
     @movie_specs = []
     CSV.foreach('movies.txt') do |subarray|
-      subarray = subarray[0].gsub(/\s+/, ',').split(',')
+      subarray = subarray[0].gsub(/\|/, ',').split(',')
       @movie_specs << subarray
     end
     @movie_specs
