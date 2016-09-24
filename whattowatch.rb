@@ -1,5 +1,15 @@
 class Movie
 
+  def read_data
+    require 'CSV'
+    @data = []
+    CSV.foreach('user_data.txt') do |subarray|
+      subarray = subarray[0].gsub(/\s+/, ',').split(',')
+      @data << subarray
+    end
+    @data
+  end
+
   def run_all_movie_ratings
     movie = Movie.new
     movie.read_data
@@ -21,24 +31,6 @@ class Movie
     movie.read_movie_specs
     movie.ask_for_movie_name_id
     movie.get_movie_name
-  end
-
-  def run_all_user_ratings
-    movie = Movie.new
-    movie.read_data
-    movie.ask_for_user_id
-    movie.get_user_ratings
-    movie.show_user_ratings
-  end
-
-  def read_data
-    require 'CSV'
-    @data = []
-    CSV.foreach('user_data.txt') do |subarray|
-      subarray = subarray[0].gsub(/\s+/, ',').split(',')
-      @data << subarray
-    end
-    @data
   end
 
   def ask_for_movie_rating_id
@@ -74,27 +66,6 @@ class Movie
     puts "The average rating of movie #{@movie_id} is #{(@sum.to_f/@movie_ratings.count.to_f).round(1)} stars."
   end
 
-  def ask_for_user_id
-    puts "What user would you like to find the ratings for? Please use the user's ID number: "
-    @user_id = gets.chomp.to_i
-    ask_for_user_id until @user_id > 0
-  end
-
-  def get_user_ratings
-    @user_ratings = []
-    @data.each do |subarray|
-      if @user_id == subarray[0].to_i
-        @user_ratings << subarray[2].to_i
-      end
-    end
-    @user_ratings
-  end
-
-  def show_user_ratings
-    p @user_ratings
-    puts "Here are all the available ratings for user #{@user_id}."
-  end
-
   def read_movie_specs
     require 'CSV'
     @movie_specs = []
@@ -124,24 +95,68 @@ def select_search
   puts "(4) Find all ratings of a user (need user ID)."
   selection = gets.chomp.to_i
   loop do
-  movie = Movie.new
 
     if selection == 1
+      movie = Movie.new
       movie.run_all_movie_ratings
       break
     elsif selection == 2
+      movie = Movie.new
       movie.run_average_movie_rating
       break
     elsif selection == 3
+      movie = Movie.new
       movie.run_movie_by_name
       break
     elsif selection == 4
-      movie.run_all_user_ratings
+      user = User.new
+      user.run_all_user_ratings
       break
     else
       puts "Please enter a valid option (1-4): "
       selection = gets.chomp.to_i
     end
+  end
+end
+
+class User
+  def read_data
+    require 'CSV'
+    @data = []
+    CSV.foreach('user_data.txt') do |subarray|
+      subarray = subarray[0].gsub(/\s+/, ',').split(',')
+      @data << subarray
+    end
+    @data
+  end
+
+  def run_all_user_ratings
+    user = User.new
+    user.read_data
+    user.ask_for_user_id
+    user.get_user_ratings
+    user.show_user_ratings
+  end
+
+  def ask_for_user_id
+    puts "What user would you like to find the ratings for? Please use the user's ID number: "
+    @user_id = gets.chomp.to_i
+    ask_for_user_id until @user_id > 0
+  end
+
+  def get_user_ratings
+    @user_ratings = []
+    @data.each do |subarray|
+      if @user_id == subarray[0].to_i
+        @user_ratings << subarray[2].to_i
+      end
+    end
+    @user_ratings
+  end
+
+  def show_user_ratings
+    p @user_ratings
+    puts "Here are all the available ratings for user #{@user_id}."
   end
 end
 
